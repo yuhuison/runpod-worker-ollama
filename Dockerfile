@@ -19,27 +19,21 @@ WORKDIR /work
 
 ADD ./src /work
 
+# Copy model files into the image (place GGUF files in ./models/ before building)
+COPY ./models /models
+
 # ===== llama-server configuration via LLAMA_ARG_* environment variables =====
 # llama-server natively reads these env vars, no CLI args needed.
 
-# Model path (GGUF file on the mounted RunPod volume)
-ENV LLAMA_ARG_MODEL="/runpod-volume/models/model.gguf"
-# Multimodal projector path (optional, leave empty to disable)
+ENV LLAMA_ARG_MODEL="/models/model.gguf"
 ENV LLAMA_ARG_MMPROJ=""
-# Context size
 ENV LLAMA_ARG_CTX_SIZE=131072
-# Number of GPU layers to offload
 ENV LLAMA_ARG_N_GPU_LAYERS=99
-# Flash attention
 ENV LLAMA_ARG_FLASH_ATTN=on
-# Server host and port
 ENV LLAMA_ARG_HOST=127.0.0.1
 ENV LLAMA_ARG_PORT=8080
-# Parallel request slots
 ENV LLAMA_ARG_N_PARALLEL=4
-# Reasoning/thinking budget (0 = disabled)
 ENV LLAMA_ARG_THINK_BUDGET=0
-# Model alias (used as model name in API responses, optional)
 ENV LLAMA_ARG_ALIAS=""
 
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt && chmod +x /work/start.sh

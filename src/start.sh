@@ -20,8 +20,8 @@ fi
 
 if [ ! -f "$LLAMA_ARG_MODEL" ]; then
     echo "ERROR: Model file not found: $LLAMA_ARG_MODEL"
-    echo "Files in /runpod-volume/models/:"
-    ls -la /runpod-volume/models/ 2>/dev/null || echo "  Directory does not exist"
+    echo "Files in model directory:"
+    ls -la "$(dirname "$LLAMA_ARG_MODEL")" 2>/dev/null || echo "  Directory does not exist"
     exit 1
 fi
 
