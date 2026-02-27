@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Sang Yu/AppData/Local/Temp/0dfc5f8c-6dfd-41e3-bad4-ad8e80857c0c_llama-docker.tar.gz.llama-docker.tar.gz/**)",
+      "mcp__deepwiki__read_wiki_structure",
+      "mcp__deepwiki__ask_question"
+    ]
+  }
+}

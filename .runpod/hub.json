@@ -1,9 +1,8 @@
 {
-  "title": "Runpod Worker Ollama",
-  "description": "A serverless Ollama Worker for Runpod",
+  "title": "Runpod Worker llama-server",
+  "description": "A serverless llama.cpp (llama-server) Worker for RunPod",
   "type": "serverless",
   "category": "language",
-  "iconUrl": "https://ollama.com/public/ollama.png",
   "config": {
     "runsOn": "GPU",
     "gpuCount": 1,
@@ -12,13 +11,63 @@
     "presets": [],
     "env": [
       {
-        "key": "OLLAMA_MODEL_NAME",
+        "key": "LLAMA_ARG_MODEL",
         "input": {
-          "name": "Model Name",
+          "name": "Model Path",
           "type": "string",
-          "description": "Name of a model to preload",
-          "default": "phi3",
+          "description": "Path to the GGUF model file (e.g., /runpod-volume/models/model.gguf)",
+          "default": "/runpod-volume/models/model.gguf",
           "advanced": false
+        }
+      },
+      {
+        "key": "LLAMA_ARG_MMPROJ",
+        "input": {
+          "name": "Multimodal Projector",
+          "type": "string",
+          "description": "Path to multimodal projector GGUF file (optional, for vision models)",
+          "default": "",
+          "advanced": true
+        }
+      },
+      {
+        "key": "LLAMA_ARG_CTX_SIZE",
+        "input": {
+          "name": "Context Size",
+          "type": "number",
+          "description": "Maximum context window size in tokens",
+          "default": 131072,
+          "advanced": false
+        }
+      },
+      {
+        "key": "LLAMA_ARG_N_GPU_LAYERS",
+        "input": {
+          "name": "GPU Layers",
+          "type": "number",
+          "description": "Number of model layers to offload to GPU",
+          "default": 99,
+          "advanced": true
+        }
+      },
+      {
+        "key": "LLAMA_ARG_FLASH_ATTN",
+        "input": {
+          "name": "Flash Attention",
+          "type": "string",
+          "description": "Enable flash attention (on/off/auto)",
+          "default": "on",
+          "advanced": true
+        }
+      },
+      {
+        "key": "LLAMA_ARG_N_PARALLEL",
+        "input": {
+          "name": "Parallel Slots",
+          "type": "number",
+          "description": "Number of parallel inference slots",
+          "default": 4,
+          "advanced": true
         }
       },
       {
@@ -26,17 +75,17 @@
         "input": {
           "name": "Max Concurrency",
           "type": "number",
-          "description": "Maximum number of concurrent requests to handle (default: 8)",
+          "description": "Maximum number of concurrent RunPod requests",
           "default": 8,
           "advanced": true
         }
       },
       {
-        "key": "OLLAMA_NUM_PARALLEL",
+        "key": "LLAMA_ARG_ALIAS",
         "input": {
-          "name": "Parallel Requests",
+          "name": "Model Alias",
           "type": "string",
-          "description": "Maximum number of concurrent requests to handle (default: 4 or 1)",
+          "description": "Model name alias returned by /v1/models (optional)",
           "default": "",
           "advanced": true
         }

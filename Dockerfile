@@ -1,45 +1,47 @@
-ARG OLLAMA_VERSION=0.17.4
-
-# Use an official base${OLLAMA_VERSION} image with your desired version
-FROM ollama/ollama:${OLLAMA_VERSION}
+# Use llama.cpp server image with CUDA support (Ubuntu 22.04, CUDA 12.4)
+FROM ghcr.io/ggml-org/llama.cpp:server-cuda
 
 ENV PYTHONUNBUFFERED=1
 
-# Set up the working directory
 WORKDIR /
 
+# Install Python 3 and pip (server-cuda image does not include Python)
 RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-recommends \
-    software-properties-common \
-    gpg-agent \
-    build-essential apt-utils \
-    && apt-get install --reinstall ca-certificates \
-    && add-apt-repository --yes ppa:deadsnakes/ppa && apt update --yes --quiet \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-recommends \
-    python3.11 \
-    python3.11-dev \
-    python3.11-distutils \
-    python3.11-lib2to3 \
-    python3.11-gdbm \
-    python3.11-tk \
+    python3 \
+    python3-pip \
+    python3-dev \
     bash \
-    curl && \
-    ln -s /usr/bin/python3.11 /usr/bin/python && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
 WORKDIR /work
 
-# Add my src as /work
 ADD ./src /work
 
-# Set defaut ollama models directory to /runpod-volume where runpod will mount the volume by default
-ENV OLLAMA_MODELS="/runpod-volume"
+# ===== llama-server configuration via LLAMA_ARG_* environment variables =====
+# llama-server natively reads these env vars, no CLI args needed.
 
-# Install runpod and its dependencies
-RUN pip install -r requirements.txt && chmod +x /work/start.sh
-    
+# Model path (GGUF file on the mounted RunPod volume)
+ENV LLAMA_ARG_MODEL="/runpod-volume/models/model.gguf"
+# Multimodal projector path (optional, leave empty to disable)
+ENV LLAMA_ARG_MMPROJ=""
+# Context size
+ENV LLAMA_ARG_CTX_SIZE=131072
+# Number of GPU layers to offload
+ENV LLAMA_ARG_N_GPU_LAYERS=99
+# Flash attention
+ENV LLAMA_ARG_FLASH_ATTN=on
+# Server host and port
+ENV LLAMA_ARG_HOST=127.0.0.1
+ENV LLAMA_ARG_PORT=8080
+# Parallel request slots
+ENV LLAMA_ARG_N_PARALLEL=4
+# Reasoning/thinking budget (0 = disabled)
+ENV LLAMA_ARG_THINK_BUDGET=0
+# Model alias (used as model name in API responses, optional)
+ENV LLAMA_ARG_ALIAS=""
 
-# Set the entrypoint
-ENTRYPOINT ["/bin/sh", "-c", "/work/start.sh"]
+RUN pip install --no-cache-dir --break-system-packages -r requirements.txt && chmod +x /work/start.sh
+
+ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]

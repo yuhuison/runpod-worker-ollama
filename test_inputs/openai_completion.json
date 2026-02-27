@@ -2,7 +2,7 @@
     "input": {
         "openai_route": "/v1/completions",
         "openai_input": {
-            "model": "llama3.2:1b",
+            "model": "default",
             "prompt": "How are you?",
             "max_tokens": 60
         }

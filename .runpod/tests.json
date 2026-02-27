@@ -3,7 +3,7 @@
     {
       "name": "execute_a_prompt",
       "input": {
-        "prompt": "Say: Hallo World!"
+        "prompt": "Say: Hello World!"
       },
       "timeout": 120000
     }
@@ -13,12 +13,20 @@
     "gpuCount": 1,
     "env": [
       {
-        "key": "OLLAMA_MODEL_NAME",
-        "value": "phi3"
+        "key": "LLAMA_ARG_MODEL",
+        "value": "/runpod-volume/models/model.gguf"
+      },
+      {
+        "key": "LLAMA_ARG_CTX_SIZE",
+        "value": "4096"
+      },
+      {
+        "key": "LLAMA_ARG_N_GPU_LAYERS",
+        "value": "99"
       }
     ],
     "allowedCudaVersions": [
-      "12.8"
+      "12.4"
     ]
   }
 }
