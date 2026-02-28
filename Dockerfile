@@ -36,6 +36,6 @@ ENV LLAMA_ARG_N_PARALLEL=4
 ENV LLAMA_ARG_THINK_BUDGET=0
 ENV LLAMA_ARG_ALIAS=""
 
-RUN pip install --no-cache-dir --break-system-packages -r requirements.txt && chmod +x /work/start.sh
+RUN pip install --no-cache-dir -r requirements.txt && chmod +x /work/start.sh
 
 ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]
