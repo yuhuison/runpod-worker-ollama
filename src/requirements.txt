@@ -1,4 +1,5 @@
-runpod
+fastapi
+uvicorn[standard]
+httpx
 python-dotenv
-openai
-orjson==3.10.14
+orjson
