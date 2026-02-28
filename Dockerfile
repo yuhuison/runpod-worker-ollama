@@ -15,18 +15,20 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Download model files from HuggingFace during build
+RUN mkdir -p /models && \
+    curl -L -o /models/Qwen3.5-27B-heretic.Q6_K.gguf \
+      "https://huggingface.co/mradermacher/Qwen3.5-27B-heretic-GGUF/resolve/main/Qwen3.5-27B-heretic.Q6_K.gguf" && \
+    curl -L -o /models/Qwen3.5-27B-heretic.mmproj-f16.gguf \
+      "https://huggingface.co/mradermacher/Qwen3.5-27B-heretic-GGUF/resolve/main/Qwen3.5-27B-heretic.mmproj-f16.gguf"
+
 WORKDIR /work
 
 ADD ./src /work
 
-# Copy model files into the image (place GGUF files in ./models/ before building)
-COPY ./models /models
-
 # ===== llama-server configuration via LLAMA_ARG_* environment variables =====
-# llama-server natively reads these env vars, no CLI args needed.
-
-ENV LLAMA_ARG_MODEL="/models/model.gguf"
-ENV LLAMA_ARG_MMPROJ=""
+ENV LLAMA_ARG_MODEL="/models/Qwen3.5-27B-heretic.Q6_K.gguf"
+ENV LLAMA_ARG_MMPROJ="/models/Qwen3.5-27B-heretic.mmproj-f16.gguf"
 ENV LLAMA_ARG_CTX_SIZE=131072
 ENV LLAMA_ARG_N_GPU_LAYERS=99
 ENV LLAMA_ARG_FLASH_ATTN=on
